@@ -5,7 +5,26 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Copyright>fema3832</Copyright>
+    <Product>Steam Lowid Checker</Product>
+    <Company></Company>
+    <Authors>fema3832</Authors>
+    <PackageIcon>icon.png</PackageIcon>
+    <AssemblyName>Steam Lowid Checker</AssemblyName>
+    <RootNamespace>Steam Lowid Checker</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\fema3832\Downloads\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.45" />

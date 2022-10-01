@@ -1,59 +1,75 @@
 ﻿using HtmlAgilityPack;
-using System;
 
 namespace ScrapeTest
 {
-    static class Program
+    internal static class Program
     {
-        static void Main()
+        private static void Main()
         {
-            int hits = 0;
-            List<string> notAvaliable = new();
+            var hits = 0;
+            List<string> notAvailable = new();
             var currentDirectory = Environment.CurrentDirectory;
-
-            Thread thread1 = new Thread(() => checkID());
-            Thread thread2 = new Thread(() => checkID());
-            Thread thread3 = new Thread(() => checkID());
-            Thread thread4 = new Thread(() => checkID());
-            Thread thread5 = new Thread(() => checkID());
-            thread1.Start();
-            thread2.Start();
-            thread3.Start();
-            thread4.Start();
-            thread5.Start();
+            var threadList = new Dictionary<int, Thread>();
 
             Console.Title = "Steam lowid checker | by fema3832 | Current hits: 0";
+            Console.WriteLine("How many threads do you want to use (5 for average performance, 100 for best):");
+            int threadNum = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("");
 
-            void checkID() {
-                while (true) {
-                    string randomID = scrapetest.createRandom.random_string(3);
-                    if (!notAvaliable.Contains(randomID))
+            for (int i = 0; i < threadNum; i++)
+            {
+                threadList[i] = new Thread(checkID);
+                threadList[i].Start();
+            }
+
+
+            void checkID()
+            {
+                while (true)
+                {
+                    var randomID = scrapetest.createRandom.random_string(3);
+                    if (!notAvailable.Contains(randomID))
                     {
-                        Thread.Sleep(100);
-                        HtmlWeb web = new HtmlWeb();
-                        HtmlDocument doc = web.Load($"https://steamcommunity.com/id/{randomID}");
 
                         try
                         {
-                            if (doc.DocumentNode.SelectSingleNode("//*[@id=\"responsive_page_template_content\"]/div").GetAttributeValue("class", "default") == "error_ctn")
-                            {
-                                using (StreamWriter writer = new StreamWriter($"{currentDirectory}/avaiable.txt", true)){ writer.WriteLine($"{randomID} is available!"); }
-                                Console.WriteLine($"{randomID} is available!");
-                                hits++;
+                            var web = new HtmlWeb();
+                            var web1 = new HtmlWeb();
+                            var web2 = new HtmlWeb();
+                            var doc = web.Load($"https://steamcommunity.com/id/{randomID}");
+                            var doc1 = web1.Load($"https://steamcommunity.com/id/{randomID}");
+                            var doc2 = web2.Load($"https://steamcommunity.com/id/{randomID}");
+                            Thread.Sleep(4000);
 
-                                Console.Title = $"Steam lowid checker | by fema3832 | Current hits: {hits.ToString()}\n";
-                            }
-                            else
+                            Console.WriteLine($"Checking id/{randomID} ...");
+                            if (doc.DocumentNode.SelectSingleNode("//*[@id=\"responsive_page_template_content\"]/div").HasClass("error_ctn"))
                             {
-                                Console.WriteLine($"{randomID} is not available!");
-                                notAvaliable.Add(randomID);
+                                if (doc1.DocumentNode.SelectSingleNode("//*[@id=\"message\"]/h3").InnerText == "The specified profile could not be found.")
+                                {
+                                    if (doc2.DocumentNode.SelectSingleNode("//*[@id=\"message\"]/h1").InnerText == "Sorry!")
+                                    {
+                                        using (var writer = new StreamWriter($"{currentDirectory}/available.txt", true))
+                                        {
+                                            writer.WriteLine($"Available id: {randomID}");
+                                        }
+
+                                        Console.WriteLine($"Available id: {randomID}");
+                                        hits++;
+
+                                        Console.Title = $"Steam lowid checker | by fema3832 | Current hits: {hits}";
+                                    }
+                                }
                             }
+                            notAvailable.Add(randomID);
                         }
+
                         catch (Exception ex)
                         {
-                            Console.WriteLine(ex);
-                            checkID();
-                        }
+                            using (var writer = new StreamWriter($"{currentDirectory}/errors.txt", true))
+                            {
+                                writer.WriteLine($"[ERROR]\n{ex}");
+                            }
+                        } finally { checkID(); }
                     }
                 }
             }

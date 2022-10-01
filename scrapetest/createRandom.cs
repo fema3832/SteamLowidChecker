@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace scrapetest
+﻿namespace scrapetest
 {
     public static class createRandom
     {
         public static string random_string(int length)
         {
-            Random ran = new Random();
+            var ran = new Random();
 
             const string b = "abcdefghijklmnopqrstuvwxyz0123456789";
-            string random = "";
+            var random = "";
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
-                int a = ran.Next(b.Length); //string.Lenght gets the size of string
+                var a = ran.Next(b.Length);
                 random += b[a];
             }
 
